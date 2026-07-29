@@ -1,4 +1,4 @@
-FROM amazoncorretto:25.0.4-alpine3.24 AS build
+FROM amazoncorretto:26.0.2-alpine3.24 AS build
 
 WORKDIR /workspace
 COPY .mvn/ .mvn/
@@ -8,7 +8,7 @@ RUN chmod +x mvnw && ./mvnw -B -ntp dependency:go-offline
 COPY src/ src/
 RUN ./mvnw -B -ntp -DskipTests package
 
-FROM amazoncorretto:25.0.4-alpine3.24 AS runtime
+FROM amazoncorretto:26.0.2-alpine3.24 AS runtime
 
 RUN addgroup -S appgroup \
     && adduser -S -D -H -u 10001 -G appgroup appuser

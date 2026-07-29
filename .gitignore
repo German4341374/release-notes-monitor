@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+.project
+.classpath
+.settings/
+target/
+*.log
+.env
+data/
+dependency-reduced-pom.xml
+.DS_Store
+docs/images/*.tmp.*

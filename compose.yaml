@@ -1,0 +1,82 @@
+name: release-notes-monitor
+
+services:
+  database:
+    image: postgres:18.4-alpine3.24
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-release_monitor}
+      POSTGRES_USER: ${POSTGRES_USER:-release_monitor}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local_development_only}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+  app:
+    build:
+      context: .
+      target: runtime
+    environment:
+      DB_URL: jdbc:postgresql://database:5432/${POSTGRES_DB:-release_monitor}
+      DB_USERNAME: ${POSTGRES_USER:-release_monitor}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-local_development_only}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      SCHEDULE_ENABLED: ${SCHEDULE_ENABLED:-true}
+      SCHEDULE_CRON: "${SCHEDULE_CRON:-0 0 */6 * * *}"
+      THYMELEAF_CACHE: "true"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - -q
+        - --spider
+        - http://127.0.0.1:8080/health
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 30s
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+networks:
+  frontend:
+  backend:
+    internal: true
+
+volumes:
+  postgres_data:

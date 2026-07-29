@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${product.name() + ' · Release Notes Monitor'}">Product</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script defer th:src="@{/js/app.js}"></script>
+</head>
+<body>
+<header class="site-header compact">
+  <a class="brand" th:href="@{/}">
+    <span class="brand-mark">R</span>
+    <span><strong>Release Notes Monitor</strong><small>Application support workspace</small></span>
+  </a>
+  <nav><a class="button button-quiet" th:href="@{/products/{id}/edit(id=${product.id()})}">Edit</a></nav>
+</header>
+
+<main class="narrow">
+  <a class="back-link" th:href="@{/}">← Dashboard</a>
+  <div class="alert success" role="status" th:if="${success}" th:text="${success}"></div>
+
+  <section class="detail-hero panel">
+    <div>
+      <p class="eyebrow" th:text="${product.vendor()}">Vendor</p>
+      <h1 th:text="${product.name()}">Product</h1>
+      <span class="status"
+            th:classappend="${product.lastCheckStatus().name().toLowerCase().replace('_', '-')}"
+            th:text="${product.lastCheckStatus().displayName}">Unknown</span>
+    </div>
+    <div class="detail-actions">
+      <form method="post" th:action="@{/products/{id}/check(id=${product.id()})}">
+        <button class="button button-primary" type="submit">Check now</button>
+      </form>
+      <form method="post" class="delete-form" th:action="@{/products/{id}/delete(id=${product.id()})}">
+        <button class="button button-danger" type="submit">Delete</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="panel detail-card">
+      <p class="eyebrow">Version state</p>
+      <dl>
+        <div><dt>Installed</dt><dd th:text="${product.installedVersion()}">1.0.0</dd></div>
+        <div><dt>Latest</dt><dd th:text="${product.latestVersion() ?: 'Not available'}">1.1.0</dd></div>
+        <div><dt>Strategy</dt><dd th:text="${product.checkStrategy().displayName}">Manual</dd></div>
+        <div><dt>Last checked</dt><dd th:text="${product.lastCheckedAt() ?: 'Never'}">Never</dd></div>
+      </dl>
+    </article>
+    <article class="panel detail-card">
+      <p class="eyebrow">Source and notes</p>
+      <p th:if="${product.versionSourceUrl()}">
+        <a th:href="${product.versionSourceUrl()}" rel="noreferrer" th:text="${product.versionSourceUrl()}">Source</a>
+      </p>
+      <p th:unless="${product.versionSourceUrl()}">No external source configured.</p>
+      <p class="notes" th:text="${product.notes() ?: 'No operational notes.'}">Notes</p>
+    </article>
+  </section>
+
+  <section class="panel history">
+    <div class="panel-heading"><div><p class="eyebrow">Audit trail</p><h2>Check history</h2></div></div>
+    <div class="history-list">
+      <article th:each="entry : ${history}">
+        <span class="history-dot"
+              th:classappend="${entry.status().name().toLowerCase().replace('_', '-')}"></span>
+        <div>
+          <strong th:text="${entry.status().displayName}">Status</strong>
+          <p th:text="${entry.message()}">Message</p>
+          <small th:text="${entry.checkedAt() + ' · ' + entry.installedVersion() + ' → ' + (entry.detectedVersion() ?: '—')}">
+            Timestamp
+          </small>
+        </div>
+      </article>
+      <p class="empty-state" th:if="${#lists.isEmpty(history)}">No checks have been recorded.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

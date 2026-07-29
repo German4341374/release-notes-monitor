@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${pageTitle + ' · Release Notes Monitor'}">Product</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="site-header compact">
+  <a class="brand" th:href="@{/}">
+    <span class="brand-mark">R</span>
+    <span><strong>Release Notes Monitor</strong><small>Application support workspace</small></span>
+  </a>
+</header>
+
+<main class="narrow">
+  <a class="back-link" th:href="${productId == null ? '/' : '/products/' + productId}">← Back</a>
+  <section class="panel form-panel">
+    <div class="panel-heading">
+      <div><p class="eyebrow">Product inventory</p><h1 th:text="${pageTitle}">Add product</h1></div>
+    </div>
+
+    <form th:object="${productForm}"
+          th:action="${productId == null ? '/products' : '/products/' + productId}"
+          method="post"
+          class="product-form">
+      <div class="alert danger" th:if="${#fields.hasGlobalErrors()}">
+        <span th:each="error : ${#fields.globalErrors()}" th:text="${error}">Validation error</span>
+      </div>
+
+      <label>
+        Product name
+        <input type="text" th:field="*{name}" maxlength="120" required placeholder="Example Agent">
+        <small class="field-error" th:errors="*{name}"></small>
+      </label>
+      <label>
+        Vendor
+        <input type="text" th:field="*{vendor}" maxlength="120" required placeholder="Example Operations">
+        <small class="field-error" th:errors="*{vendor}"></small>
+      </label>
+      <div class="form-grid">
+        <label>
+          Installed version
+          <input type="text" th:field="*{installedVersion}" maxlength="80" required placeholder="1.4.2">
+          <small class="field-error" th:errors="*{installedVersion}"></small>
+        </label>
+        <label>
+          Latest version
+          <input type="text" th:field="*{latestVersion}" maxlength="80" placeholder="1.5.0">
+          <small class="field-error" th:errors="*{latestVersion}"></small>
+        </label>
+      </div>
+      <label>
+        Check strategy
+        <select th:field="*{checkStrategy}">
+          <option th:each="strategy : ${strategies}"
+                  th:value="${strategy.name()}"
+                  th:text="${strategy.displayName}">Manual update</option>
+        </select>
+      </label>
+      <label>
+        Version source URL
+        <input type="url" th:field="*{versionSourceUrl}" maxlength="500"
+               placeholder="https://github.com/owner/repository">
+        <small>Required for Static JSON and GitHub Releases checks.</small>
+        <small class="field-error" th:errors="*{versionSourceUrl}"></small>
+      </label>
+      <label>
+        Notes
+        <textarea th:field="*{notes}" maxlength="2000" rows="5"
+                  placeholder="Compatibility notes, owner, or upgrade constraints"></textarea>
+        <small class="field-error" th:errors="*{notes}"></small>
+      </label>
+      <div class="form-actions">
+        <a class="button button-quiet" th:href="${productId == null ? '/' : '/products/' + productId}">Cancel</a>
+        <button class="button button-primary" type="submit">Save product</button>
+      </div>
+    </form>
+  </section>
+</main>
+</body>
+</html>

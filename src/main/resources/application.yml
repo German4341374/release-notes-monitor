@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: release-notes-monitor
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/release_monitor}
+    username: ${DB_USERNAME:release_monitor}
+    password: ${DB_PASSWORD:local_development_only}
+    hikari:
+      maximum-pool-size: 8
+      minimum-idle: 1
+      connection-timeout: 5000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  thymeleaf:
+    cache: ${THYMELEAF_CACHE:true}
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  shutdown: graceful
+  error:
+    include-message: never
+    include-stacktrace: never
+  forward-headers-strategy: framework
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  show-actuator: true
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health,info
+      path-mapping:
+        health: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+release-monitor:
+  github-token: ${GITHUB_TOKEN:}
+  scheduling:
+    enabled: ${SCHEDULE_ENABLED:false}
+    cron: "${SCHEDULE_CRON:0 0 */6 * * *}"
+    zone: ${SCHEDULE_ZONE:UTC}
+  http:
+    connect-timeout: ${HTTP_CONNECT_TIMEOUT:2s}
+    request-timeout: ${HTTP_REQUEST_TIMEOUT:5s}
+    max-retries: ${HTTP_MAX_RETRIES:2}
+    retry-base-delay: ${HTTP_RETRY_BASE_DELAY:250ms}
+    max-response-bytes: ${HTTP_MAX_RESPONSE_BYTES:1048576}
+
+logging:
+  level:
+    root: INFO
+    dev.portfolio.releasemonitor: INFO

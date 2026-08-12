@@ -22,7 +22,7 @@
     <springdoc.version>3.0.3</springdoc.version>
     <testcontainers.version>2.0.5</testcontainers.version>
     <postgresql.version>42.7.12</postgresql.version>
-    <jackson2-databind.version>2.21.5</jackson2-databind.version>
+    <jackson2-databind.version>2.22.1</jackson2-databind.version>
     <jackson3-databind.version>3.1.5</jackson3-databind.version>
     <argLine></argLine>
   </properties>

@@ -296,7 +296,7 @@ More operational guidance is available in [docs/operations.md](docs/operations.m
 - There are no users, OAuth, email, or notification integrations.
 - Scheduling is single-instance; a clustered deployment would require distributed job coordination.
 
-## Future improvements
+## Possible next steps
 
 - Add allow-listed vendor-specific source adapters.
 - Support explicit pre-release tracking.

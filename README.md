@@ -5,9 +5,12 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?logo=springboot)](https://spring.io/projects/spring-boot)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Release Notes Monitor is a compact application-support tool for tracking installed software versions,
-discovering newer releases, and retaining an audit trail of every check. It combines a REST API,
-scheduled jobs, PostgreSQL persistence, and a responsive operations dashboard.
+Keep a list of installed software versions and check whether something newer is available.
+Release Notes Monitor can read a JSON endpoint, check GitHub releases, or use a version
+you enter manually.
+
+Run a check yourself or let the schedule do it. The dashboard shows available updates,
+failed checks, and the history for each product.
 
 ![Release Notes Monitor dashboard](docs/images/dashboard.png)
 
